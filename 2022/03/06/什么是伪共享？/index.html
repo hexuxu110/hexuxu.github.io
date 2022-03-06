@@ -26,7 +26,7 @@
 <meta property="og:image" content="https://raw.githubusercontent.com/hexuxu110/image/main/img/cpu.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/hexuxu110/image/main/img/%E4%BC%AA%E5%85%B1%E4%BA%AB.png">
 <meta property="article:published_time" content="2022-03-06T14:11:28.392Z">
-<meta property="article:modified_time" content="2022-03-06T14:19:13.775Z">
+<meta property="article:modified_time" content="2022-03-06T14:24:37.523Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://raw.githubusercontent.com/hexuxu110/image/main/img/cpu.png">
@@ -199,7 +199,7 @@
   
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      640 字
+      896 字
     </span>
   
 
@@ -208,7 +208,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      6 分钟
+      8 分钟
     </span>
   
 
@@ -253,7 +253,11 @@
 <h5 id="伪共享："><a href="#伪共享：" class="headerlink" title="伪共享："></a><strong>伪共享</strong>：</h5><p>在多个线程并发修改一个缓存行中的多个变量时，由于只能同时有一个线程去操作缓存行，将会导致性能的下降。</p>
 <p><img src="https://raw.githubusercontent.com/hexuxu110/image/main/img/%E4%BC%AA%E5%85%B1%E4%BA%AB.png" srcset="/img/loading.gif" lazyload></p>
 <p>当x,y共用一块缓存行，当线程A修改x，线程B修改y，因为x，y共用缓存行，当线程A修改了x变量 ，因为缓存一致性协议导致线程B中y变量缓存一直失效。 进而导致y变量的性能下降。</p>
-<p>如何解决伪共享？</p>
+<h5 id="如何解决伪共享？"><a href="#如何解决伪共享？" class="headerlink" title="如何解决伪共享？"></a>如何解决伪共享？</h5><h6 id="我们自定义填充缓存行："><a href="#我们自定义填充缓存行：" class="headerlink" title="我们自定义填充缓存行："></a>我们自定义填充缓存行：</h6><figure class="highlight java"><table><tr><td class="gutter"><div class="code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></div></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">MyLong</span> &#123;<br>    <span class="hljs-comment">//共48字节+java对象头16字节</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">volatile</span> <span class="hljs-type">long</span> <span class="hljs-variable">value</span> <span class="hljs-operator">=</span> <span class="hljs-number">0L</span>;<br>    <span class="hljs-keyword">public</span> <span class="hljs-type">long</span> padding1, padding2, padding3, padding4, padding5;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>让我们的变量独享一个缓存行</p>
+<h6 id="JDK1-8中-Contented注解："><a href="#JDK1-8中-Contented注解：" class="headerlink" title="JDK1.8中@Contented注解："></a>JDK1.8中@Contented注解：</h6><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs Java"><span class="hljs-meta">@Contended</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">MyLongAtomic</span> &#123;<br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">volatile</span> <span class="hljs-type">long</span> <span class="hljs-variable">value</span> <span class="hljs-operator">=</span> <span class="hljs-number">0L</span>;<br>&#125;<br><br></code></pre></td></tr></table></figure>
+
 
             </div>
             <hr>
